@@ -1,10 +1,8 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import argparse
-from collections import deque
-from typing import List, Optional
 
-# Constants
+import matplotlib.pyplot as plt
+import numpy as np
+
 OFF_SEASON_RATE = 1 / 1000  # One call per 1000s
 HALF_YEAR_PEAK_RATE = 10 * OFF_SEASON_RATE  # Tenfold increase
 END_YEAR_PEAK_RATE = 20 * OFF_SEASON_RATE  # Twentyfold increase
@@ -262,10 +260,14 @@ def plot_simulation_results(results):
     if littles_data:
         match_text = "✓" if littles_data["match"] else "✗"
         littles_text = (
-            f"Little's Law Verification:\n\n"
+            f"\nLittle's Law Verification:\n\n"
             f"L (mean customers) = {littles_data['L']:.2f}\n"
             f"λW (arrival × time) = {littles_data['lambda_W']:.2f}\n\n"
-            f"Match: {match_text}"
+            f"Match: {match_text}\n\n"
+            f"Simulation Parameters:\n\n"
+            f"Arrival rate: {results.get('rate', 'N/A')}x base rate\n"
+            f"Simulation Time: {results.get('time', 'N/A')} seconds\n"
+            f"Number of Servers: {results.get('servers', 'N/A')}"
         )
         axs[2, 1].text(0.5, 0.5, littles_text, ha='center', va='center', fontsize=12)
     else:
@@ -285,8 +287,8 @@ def main():
     """Main function to run the simulation and plot results."""
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description='Call Center Simulation for Modeling and Simulation Course')
-    parser.add_argument('--rate', type=float, default=10,
-                        help='Arrival rate multiplier (default: 10x base rate)')
+    parser.add_argument('--rate', type=float, default=1,
+                        help='Arrival rate multiplier (default: 1x base rate)')
     parser.add_argument('--servers', type=int, default=1,
                         help='Number of servers')
     parser.add_argument('--time', type=int, default=10000,
@@ -304,6 +306,7 @@ def main():
 
     # Run the simulation
     results = run_simulation(arrival_rate, args.servers, args.time)
+    results.update({"rate": args.rate, "time": args.time, "servers": args.servers})
 
     print(f"Simulation completed with {results['completed_customers']} customers processed.")
     print(f"Final server load: {results['server_loads'][-1]:.2f}")

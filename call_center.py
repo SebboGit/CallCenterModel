@@ -10,7 +10,6 @@ MEAN_SERVICE_TIME = 100  # Average call duration 100s
 
 
 class Customer:
-    """Customer in the call center system."""
 
     def __init__(self, id: int, arrival_time: float):
         self.id = id
@@ -53,7 +52,6 @@ def run_simulation(arrival_rate=0.01, num_servers=1, max_time=10000):
     # Run the simulation loop
     _run_simulation_loop(sim_env, stats)
 
-    # Calculate and return final results
     return _prepare_final_results(sim_env, stats)
 
 
@@ -93,10 +91,8 @@ def _run_simulation_loop(sim_env, stats):
     sim_env['next_arrival'] = np.random.exponential(1 / sim_env['arrival_rate'])
 
     while sim_env['current_time'] < sim_env['max_time']:
-        # Find and process next event
         _process_next_event(sim_env, stats)
 
-        # Record statistics periodically
         _record_statistics_if_needed(sim_env, stats)
 
 
@@ -105,10 +101,8 @@ def _process_next_event(sim_env, stats):
     # Determine next event time
     next_event_time = min(sim_env['next_arrival'], min(sim_env['next_departures']))
 
-    # Update time-weighted statistics
     _update_cumulative_stats(sim_env, stats, next_event_time)
 
-    # Update current time
     sim_env['current_time'] = next_event_time
 
     # Handle event based on type
@@ -226,8 +220,6 @@ def _calculate_and_record_current_stats(sim_env, stats):
 
 
 def _prepare_final_results(sim_env, stats):
-    """Prepare final results including Little's Law verification."""
-    # Calculate Little's Law verification
     littles_data = _verify_littles_law(sim_env, stats)
 
     # Return all collected statistics
@@ -267,29 +259,22 @@ def _verify_littles_law(sim_env, stats):
 
 
 def plot_simulation_results(results):
-    """Plot the simulation results."""
-    # Create the figure and subplots
     fig, axs = plt.subplots(3, 2, figsize=(14, 10))
     fig.suptitle('Call Center Simulation Results', fontsize=16)
 
-    # Configure plot layout
     _configure_plot_layout(fig)
 
-    # Plot each metric
     _plot_queue_metrics(axs, results)
     _plot_time_metrics(axs, results)
     _plot_server_and_littles_law(axs, results)
 
-    # Add simulation summary
     _add_simulation_summary(fig, results)
 
-    # Display the plot
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.show()
 
 
 def _configure_plot_layout(fig):
-    """Configure the layout for the simulation results plot."""
     plt.subplots_adjust(
         left=0.1,
         right=0.9,
@@ -379,7 +364,6 @@ def _plot_server_and_littles_law(axs, results):
 
 
 def _create_subplot(ax, x_data, y_data, color, title, xlabel, ylabel, annotation):
-    """Create a subplot with the specified parameters."""
     ax.plot(x_data, y_data, f'{color}-', linewidth=2)
     ax.set_title(title)
     ax.set_xlabel(xlabel)
@@ -421,7 +405,6 @@ def _plot_littles_law_verification(ax, results):
 
 
 def _add_simulation_summary(fig, results):
-    """Add a text summary of the simulation results."""
     plt.figtext(
         0.5, 0.01,
         f"Simulation Summary: {results['completed_customers']} completed customers, "
@@ -432,7 +415,6 @@ def _add_simulation_summary(fig, results):
 
 
 def main():
-    """Main function to run the simulation and plot results."""
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description='Call Center Simulation for Modeling and Simulation Course')
     parser.add_argument('--rate', type=float, default=1,
